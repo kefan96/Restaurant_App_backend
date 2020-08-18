@@ -41,6 +41,9 @@ const {
     Reservation
 } = require('./models');
 
+// middlewares
+const {Cache} = require('./middlewares'); 
+
 // passport.js setup
 app.use(require("express-session")({
     secret: "Jake is the cutest dog in the wolrd",
@@ -126,7 +129,7 @@ app.post('/logout', (req, res) => {
 // GET business api
 // expecting parameters: longitude, latitude
 // if no location procided, use NYC as default location
-app.get('/get_business', isLoggedIn, (req, res) => {
+app.get('/get_business', isLoggedIn, Cache.get, (req, res) => {
     const {
         longitude,
         latitude
@@ -147,7 +150,7 @@ app.get('/get_business', isLoggedIn, (req, res) => {
                 error: err.message
             });
         })
-});
+}, Cache.set);
 
 // POST request for /setFavourite
 // Will insert the restaurant to the favourite_ids of the current user
